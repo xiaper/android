@@ -1,0 +1,68 @@
+iframe {
+  border: 2px solid #eee;
+}
+
+th:first-child {
+  min-width: 140px;
+}
+
+.vuep {
+  height: 460px;
+}
+
+.cm-error {
+  color: rgba(255, 83, 112, 1) !important;
+  background-color: inherit !important;
+}
+
+.data-empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, .7);
+  color: #888;
+  font-size: 14px;
+}
+
+.app-nav ul ul {
+  min-width: 90px;
+}
+
+.markdown-section > div:first-child {
+  position: absolute;
+  width: 100%;
+  right: 20px;
+}
+
+.markdown-section > div:first-child p {
+  margin: 0;
+}
+
+@media (min-width: 1300px) {
+  .markdown-section {
+    max-width: 900px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .markdown-section {
+    max-width: 1100px;
+  }
+}
+
+@media (min-width: 1700px) {
+  .markdown-section {
+    max-width: 1300px;
+  }
+}
+
+@media (min-width: 1900px) {
+  .markdown-section {
+    max-width: 1200px;
+  }
+}
