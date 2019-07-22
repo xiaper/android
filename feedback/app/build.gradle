@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "com.bytedesk.kefu"
+        applicationId "com.bytedesk.feedback"
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 1
@@ -31,9 +31,9 @@ dependencies {
 
     // 萝卜丝第三步
     // 加载萝卜丝核心库
-    implementation 'com.bytedesk:core:2.0.1'
+    implementation 'com.bytedesk:core:2.0.2'
     // 加载萝卜丝默认UI库
-    implementation 'com.bytedesk:ui:2.0.1'
+    implementation 'com.bytedesk:ui:2.0.2'
 
     // 腾讯QMUI界面库
     // http://qmuiteam.com/android/page/start.html

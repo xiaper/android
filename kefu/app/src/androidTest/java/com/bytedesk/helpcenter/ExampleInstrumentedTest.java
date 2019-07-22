@@ -1,4 +1,4 @@
-package com.bytedesk.ticket;
+package com.bytedesk.helpcenter;
 
 import android.content.Context;
 

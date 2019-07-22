@@ -1,10 +1,11 @@
-package com.bytedesk.kefu;
+package com.bytedesk.helpcenter;
 
 import android.content.Context;
 import android.os.Bundle;
 
 import com.bytedesk.core.api.BDCoreApi;
 import com.bytedesk.core.callback.LoginCallback;
+import com.bytedesk.helpcenter.R;
 import com.bytedesk.ui.api.BDUiApi;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,8 +23,8 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     // 管理后台：https://www.bytedesk.com/admin#/login
-    // 获取wid, 所有设置->客服管理->技能组->唯一ID（wId）
-    public final static String wId = "201807171659201";
+    // 获取管理员uid, 登录后台->所有设置->客服账号->管理员账号(唯一ID(uid))列
+    public final static String adminUId = "201808221551193";
     // 获取appkey，登录后台->所有设置->应用管理->添加应用->appkey
     public final static String appkey = "201809171553112";
     // 获取subDomain，也即企业号：登录后台->所有设置->客服账号->企业号
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // 打开客服对话界面
-                BDUiApi.startWorkGroupChatActivity(context, wId, "工作组客服");
+                // 打开帮助中心界面
+                BDUiApi.startSupportURLActivity(context, adminUId);
             }
         });
     }

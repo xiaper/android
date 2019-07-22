@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.bytedesk.kefu">
+    package="com.bytedesk.feedback">
 
     <dist:module dist:instant="true" />
 
@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.bytedesk.kefu.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -32,20 +32,11 @@
 
         <!--萝卜丝bytedesk.com代码 开始-->
 
-        <!--对话页面-->
+        <!--意见反馈-->
         <activity
-            android:name="com.bytedesk.ui.activity.ChatKFActivity"
+            android:name="com.bytedesk.ui.activity.FeedbackActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ByteDesk"/>
-
-        <!--长连接service-->
-        <service android:name="com.bytedesk.paho.android.service.MqttService"/>
-
-        <!--下载录音-->
-        <service android:name="com.bytedesk.core.service.BDDownloadService"/>
-
-        <!--录音以及播放-->
-        <service android:name="com.bytedesk.ui.recorder.KFRecorderService"/>
 
         <!--./萝卜丝bytedesk.com代码 结束-->
 

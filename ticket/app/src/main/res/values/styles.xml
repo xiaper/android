@@ -20,12 +20,9 @@
 
     <!--添加萝卜丝样式 开始-->
     <style name="AppTheme.ByteDesk" parent="QMUI.Compat.NoActionBar">
-
         <!--导航栏样式-->
         <item name="QMUITopBarStyle">@style/ByteDeskTopBar</item>
-
     </style>
-
     <style name="ByteDeskTopBar" parent="QMUI.TopBar">
         <!--导航栏背景颜色-->
         <item name="qmui_topbar_bg_color">@color/app_color_blue</item>
@@ -37,7 +34,6 @@
         <item name="qmui_topbar_height">48dp</item>
         <item name="qmui_topbar_image_btn_height">48dp</item>
     </style>
-
     <!--添加萝卜丝样式 结束-->
 
 

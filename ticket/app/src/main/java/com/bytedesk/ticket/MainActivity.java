@@ -22,7 +22,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     // 管理后台：https://www.bytedesk.com/admin#/login
-    // 获取wid, 登录后台->所有设置->客服账号->管理员账号(唯一ID(uid))列
+    // 获取管理员uid, 登录后台->所有设置->客服账号->管理员账号(唯一ID(uid))列
     public final static String adminUId = "201808221551193";
     // 获取appkey，登录后台->所有设置->应用管理->添加应用->appkey
     public final static String appkey = "201809171553112";
