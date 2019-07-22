@@ -1,3 +1,0 @@
-- Guide
- - [Introduction](/en/README)
- 
