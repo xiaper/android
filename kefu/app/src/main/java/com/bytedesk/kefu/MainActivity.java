@@ -1,4 +1,4 @@
-package com.bytedesk.helpcenter;
+package com.bytedesk.kefu;
 
 import android.content.Context;
 import android.os.Bundle;

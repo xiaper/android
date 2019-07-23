@@ -1,4 +1,4 @@
-package com.bytedesk.helpcenter;
+package com.bytedesk.kefu;
 
 import org.junit.Test;
 
