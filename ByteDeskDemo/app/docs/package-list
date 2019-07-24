@@ -1,0 +1,17 @@
+com.bytedesk.core
+com.bytedesk.core.api
+com.bytedesk.core.callback
+com.bytedesk.core.event
+com.bytedesk.core.http
+com.bytedesk.core.receiver
+com.bytedesk.core.repository
+com.bytedesk.core.room.converter
+com.bytedesk.core.room.dao
+com.bytedesk.core.room.database
+com.bytedesk.core.room.entity
+com.bytedesk.core.service
+com.bytedesk.core.service.mqtt
+com.bytedesk.core.service.mqtt.model
+com.bytedesk.core.util
+com.bytedesk.core.viewmodel
+com.bytedesk.paho.android.service
