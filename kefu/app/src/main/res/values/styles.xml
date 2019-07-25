@@ -20,10 +20,8 @@
 
     <!--添加萝卜丝样式 开始-->
     <style name="AppTheme.ByteDesk" parent="QMUI.Compat.NoActionBar">
-
         <!--导航栏样式-->
         <item name="QMUITopBarStyle">@style/ByteDeskTopBar</item>
-
     </style>
 
     <style name="ByteDeskTopBar" parent="QMUI.TopBar">
