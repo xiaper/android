@@ -1,6 +1,6 @@
-# 5分钟集成在线客服
+# 5分钟集成自定义UI
 
-- [Demo](https://github.com/Bytedesk/bytedesk-android/tree/master/Tutorial/kefu)
+- [Demo](https://github.com/Bytedesk/bytedesk-android/tree/master/Tutorial/myui)
 
 ## 准备工作
 
