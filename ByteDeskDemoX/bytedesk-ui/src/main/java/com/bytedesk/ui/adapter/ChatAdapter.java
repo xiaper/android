@@ -88,6 +88,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
         }
     }
 
+//    public List<MessageEntity> getmMessages() {
+//        return mMessages;
+//    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout;
@@ -148,8 +152,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        MessageEntity message = mMessages.get(position);
-        viewHolder.setContent(message);
+        MessageEntity beforeEntity = position > 0 ? mMessages.get(position - 1) : null;
+        MessageEntity messageEntity = mMessages.get(position);
+        //
+        boolean showTimestamp = true;
+        if (beforeEntity != null) {
+            showTimestamp = BDUiUtils.showTime(messageEntity.getCreatedAt(), beforeEntity.getCreatedAt());
+        }
+        viewHolder.setContent(showTimestamp, messageEntity);
 
         if (null != mChatItemClickListener) {
             viewHolder.setItemClickListener(this.mChatItemClickListener);
@@ -196,6 +206,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
         private ProgressBar progressBar;
         // 发送错误
         private ImageView errorImageView;
+        // 送达、已读状态
+        private TextView statusTextView;
         //
         private ChatItemClickListener itemClickListener;
 
@@ -285,13 +297,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
                     || messageViewType == MessageEntity.TYPE_ROBOT_SELF_ID) {
                 progressBar = itemView.findViewById(R.id.bytedesk_message_item_loading);
                 errorImageView = itemView.findViewById(R.id.bytedesk_message_item_error);
+                statusTextView = itemView.findViewById(R.id.bytedesk_message_item_status);
             }
-
         }
 
-        public void setContent(final MessageEntity msgEntity) {
-//            Logger.i("type: " + msgEntity.getType() + " content:" + msgEntity.getContent());
-            timestampTextView.setText(BDUiUtils.friendlyTime(msgEntity.getCreatedAt(), mContext));
+        public void setContent(boolean showTimestamp, final MessageEntity msgEntity) {
+            Logger.i("type: %s, content: %s, status: %s",
+                    msgEntity.getType(), msgEntity.getContent(), msgEntity.getStatus());
+
+            if (showTimestamp) {
+                timestampTextView.setVisibility(View.VISIBLE);
+                timestampTextView.setText(BDUiUtils.friendlyTime(msgEntity.getCreatedAt(), mContext));
+            } else {
+                timestampTextView.setVisibility(View.GONE);
+            }
 
             // 文字消息
             if (messageViewType == MessageEntity.TYPE_TEXT_ID
@@ -317,7 +336,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
                     public void onTelLinkClick(String phoneNumber) {
                         // TODO:
                         Toast.makeText(mContext, "识别到电话号码是：" + phoneNumber, Toast.LENGTH_SHORT).show();
-
 //                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
 //                        mContext.startActivity(intent);
                     }
@@ -326,14 +344,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
                     public void onMailLinkClick(String mailAddress) {
                         // TODO:
                         Toast.makeText(mContext, "识别到邮件地址是：" + mailAddress, Toast.LENGTH_SHORT).show();
-
                     }
 
                     @Override
                     public void onWebUrlLinkClick(String url) {
                         // TODO:
                         Toast.makeText(mContext, "识别到网页链接是：" + url, Toast.LENGTH_SHORT).show();
-
                         BDUiApi.startHtml5Chat(mContext, url, "打开网址");
                     }
                 });
@@ -341,9 +357,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
                 contentTextView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-
                         Logger.d("mid:" + msgEntity.getMid());
-
                         EventBus.getDefault().post(new LongClickEvent(msgEntity));
 
                         return false;
@@ -518,14 +532,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
 
                     progressBar.setVisibility(View.VISIBLE);
                     errorImageView.setVisibility(View.GONE);
+                    statusTextView.setVisibility(View.GONE);
                 } else if (msgEntity.getStatus().equals(BDCoreConstant.MESSAGE_STATUS_ERROR)) {
 
                     progressBar.setVisibility(View.GONE);
                     errorImageView.setVisibility(View.VISIBLE);
+                    statusTextView.setVisibility(View.GONE);
+                } else if (msgEntity.getStatus().equals(BDCoreConstant.MESSAGE_STATUS_RECALL) ||
+                        msgEntity.getStatus().equals(BDCoreConstant.MESSAGE_STATUS_RECEIVED) ||
+                        msgEntity.getStatus().equals(BDCoreConstant.MESSAGE_STATUS_READ)) {
+
+                    progressBar.setVisibility(View.GONE);
+                    errorImageView.setVisibility(View.GONE);
+                    statusTextView.setVisibility(View.VISIBLE);
+                    statusTextView.setText(msgEntity.getStatus());
                 } else {
 
                     progressBar.setVisibility(View.GONE);
                     errorImageView.setVisibility(View.GONE);
+                    statusTextView.setVisibility(View.GONE);
                 }
             }
 
@@ -740,6 +765,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
 
     protected static final int STOP = 0x10000;
     protected static final int NEXT = 0x10001;
+
     private class ProgressHandler extends Handler {
         private WeakReference<QMUIProgressBar> weakCircleProgressBar;
 

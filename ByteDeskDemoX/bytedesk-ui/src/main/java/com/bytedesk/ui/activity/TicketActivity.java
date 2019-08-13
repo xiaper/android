@@ -3,6 +3,7 @@ package com.bytedesk.ui.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.bytedesk.ui.R;
 import com.bytedesk.ui.util.BDUiConstant;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
@@ -100,6 +102,13 @@ public class TicketActivity extends AppCompatActivity {
 
     private void initTopBar() {
         mTopBar.addLeftBackImageButton().setOnClickListener(v ->  finish());
+        //
+        mTopBar.addRightTextButton("我的工单", QMUIViewHelper.generateViewId())
+                .setOnClickListener(v -> {
+                    Intent intent = new Intent(this, TicketRecordActivity.class);
+                    intent.putExtra(BDUiConstant.EXTRA_UID, mUid);
+                    startActivity(intent);
+                });
         mTopBar.setTitle(mTitle);
     }
 

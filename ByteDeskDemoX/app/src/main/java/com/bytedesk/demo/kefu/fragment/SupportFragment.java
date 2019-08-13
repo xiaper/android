@@ -69,9 +69,6 @@ public class SupportFragment extends BaseFragment {
                 .addItemView(apiItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //
-//                        SupportApiFragment apiFragment = new SupportApiFragment();
-//                        startFragment(apiFragment);
                         BDUiApi.startSupportApiActivity(getContext(), BDDemoConst.DEFAULT_TEST_ADMIN_UID);
                     }
                 })

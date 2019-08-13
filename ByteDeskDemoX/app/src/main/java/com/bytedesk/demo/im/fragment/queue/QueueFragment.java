@@ -246,13 +246,8 @@ public class QueueFragment extends BaseFragment implements SwipeItemClickListene
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent messageEvent) {
+        Logger.i("onMessageEvent");
 
-        try {
-            JSONObject jsonObject = new JSONObject(messageEvent.getContent());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
 

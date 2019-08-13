@@ -320,5 +320,7 @@
     <string name="title_activity_chat_wx">ChatWxActivity</string>
     <string name="title_activity_contact_profile">ContactProfileActivity</string>
     <string name="title_activity_leave_message">LeaveMessageActivity</string>
+    <string name="title_activity_feedback_record">FeedbackRecordActivity</string>
+    <string name="title_activity_ticket_record">TicketRecordActivity</string>
 
 </resources>

@@ -24,7 +24,6 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,6 +70,8 @@ import com.bytedesk.ui.util.BDUiConstant;
 import com.bytedesk.ui.util.BDUiUtils;
 import com.bytedesk.ui.util.EmotionMaps;
 import com.bytedesk.ui.util.ExpressionUtil;
+import com.bytedesk.ui.widget.InputAwareLayout;
+import com.bytedesk.ui.widget.KeyboardAwareLinearLayout;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -112,8 +113,11 @@ public class ChatIMActivity extends ChatBaseActivity
         View.OnTouchListener,
         ViewPager.OnPageChangeListener,
         AdapterView.OnItemClickListener,
-        View.OnFocusChangeListener, KFRecorder.OnStateChangedListener {
+        View.OnFocusChangeListener, KFRecorder.OnStateChangedListener,
+        KeyboardAwareLinearLayout.OnKeyboardShownListener,
+        KeyboardAwareLinearLayout.OnKeyboardHiddenListener {
 
+    private InputAwareLayout mInputAwaireLayout;
     private QMUITopBarLayout mTopBar;
     private QMUIPullRefreshLayout mPullRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -217,7 +221,7 @@ public class ChatIMActivity extends ChatBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.bytedesk_activity_chat_wx);
+        setContentView(R.layout.bytedesk_activity_chat_im);
 
         //
         if (null != getIntent()) {
@@ -265,7 +269,6 @@ public class ChatIMActivity extends ChatBaseActivity
             //
             mUid = getIntent().getStringExtra(BDUiConstant.EXTRA_UID);
             mTitle = getIntent().getStringExtra(BDUiConstant.EXTRA_TITLE);
-
         }
 
         //
@@ -278,8 +281,8 @@ public class ChatIMActivity extends ChatBaseActivity
         if (mIsVisitor) {
             requestThread();
         }
-        // 从服务器端加载聊天记录
-        getMessages();
+        // 从服务器端加载聊天记录，默认暂不加载
+        // getMessages();
     }
 
     @Override
@@ -660,6 +663,10 @@ public class ChatIMActivity extends ChatBaseActivity
      * 界面初始化
      */
     private void initView () {
+        //
+        mInputAwaireLayout = findViewById(R.id.bytedesk_activity_chat_im);
+        mInputAwaireLayout.addOnKeyboardShownListener(this);
+        mInputAwaireLayout.addOnKeyboardHiddenListener(this);
         //
         mPullRefreshLayout = findViewById(R.id.bytedesk_chat_pulltorefresh);
         mPullRefreshLayout.setOnPullListener(pullListener);
@@ -1682,6 +1689,7 @@ public class ChatIMActivity extends ChatBaseActivity
                 }).show();
     }
 
+
     /**
      * 下拉刷新
      */
@@ -1711,23 +1719,35 @@ public class ChatIMActivity extends ChatBaseActivity
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            String content = charSequence.toString();
+            Logger.i("input content: ", content);
 
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String content = charSequence.toString();
-            // Logger.i("input content: ", content);
+            Logger.i("input content: ", content);
 
-            // TODO: 输入框文字变化时，发送消息输入状态消息
-
-            // TODO: 查询常见问题，并高亮提示
-
+            // 切换扩展按钮和发送按钮
+            if (content.length() > 0) {
+                mPlusButton.setVisibility(View.GONE);
+                mSendButton.setVisibility(View.VISIBLE);
+            } else {
+                mPlusButton.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
+            Logger.i("afterTextChanged");
 
+            String content = editable.toString();
+            if (content != null) {
+                // 输入框文字变化时，发送消息输入状态消息
+                BDMqttApi.sendPreviewMessage(ChatIMActivity.this, mTidOrUidOrGid, content, mThreadType);
+            }
         }
     };
 
@@ -2046,50 +2066,58 @@ public class ChatIMActivity extends ChatBaseActivity
      */
     private void sendTextMessage(String content) {
 
+        if (!BDMqttApi.isConnected(this)) {
+            Toast.makeText(this, "网络断开，请稍后重试", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // 自定义本地消息id，用于判断消息发送状态. 消息通知或者回调接口中会返回此id
         final String localId = BDCoreUtils.uuid();
 
         // 插入本地消息
         mRepository.insertTextMessageLocal(mTidOrUidOrGid, mWorkGroupWid, content, localId, mThreadType);
 
+        // 1. 异步发送文字消息
+        BDMqttApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType);
+
         // 同步发送消息(推荐)
-        BDCoreApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType, new BaseCallback() {
-
-            @Override
-            public void onSuccess(JSONObject object) {
-                //
-                try {
-
-                    int status_code = object.getInt("status_code");
-                    if (status_code == 200) {
-
-                        String localId = object.getJSONObject("data").getString("localId");
-                        Logger.i("callback localId: " + localId);
-
-                        // TODO: 更新消息发送状态为成功
-                        mRepository.updateMessageStatusSuccess(localId);
-
-                    } else {
-
-                        // 修改本地消息发送状态为error
-                        mRepository.updateMessageStatusError(localId);
-
-                        // 发送消息失败
-                        String message = object.getString("message");
-                        Toast.makeText(ChatIMActivity.this, message, Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(JSONObject object) {
-                // 发送消息失败
-                Toast.makeText(ChatIMActivity.this, "发送消息失败", Toast.LENGTH_LONG).show();
-            }
-        });
+//        BDCoreApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType, new BaseCallback() {
+//
+//            @Override
+//            public void onSuccess(JSONObject object) {
+//                //
+//                try {
+//
+//                    int status_code = object.getInt("status_code");
+//                    if (status_code == 200) {
+//
+//                        String localId = object.getJSONObject("data").getString("localId");
+//                        Logger.i("callback localId: " + localId);
+//
+//                        // TODO: 更新消息发送状态为成功
+//                        mRepository.updateMessageStatusSuccess(localId);
+//
+//                    } else {
+//
+//                        // 修改本地消息发送状态为error
+//                        mRepository.updateMessageStatusError(localId);
+//
+//                        // 发送消息失败
+//                        String message = object.getString("message");
+//                        Toast.makeText(ChatIMActivity.this, message, Toast.LENGTH_LONG).show();
+//                    }
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(JSONObject object) {
+//                // 发送消息失败
+//                Toast.makeText(ChatIMActivity.this, "发送消息失败", Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     /**
@@ -2494,6 +2522,20 @@ public class ChatIMActivity extends ChatBaseActivity
                 }).show();
     }
 
+
+    @Override
+    public void onKeyboardHidden() {
+        Logger.i("onKeyboardHidden");
+
+    }
+
+    @Override
+    public void onKeyboardShown() {
+        Logger.i("onKeyboardShown");
+        mRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
+        mExtensionLayout.setVisibility(View.GONE);
+        mEmotionLayout.setVisibility(View.GONE);
+    }
 
 }
 

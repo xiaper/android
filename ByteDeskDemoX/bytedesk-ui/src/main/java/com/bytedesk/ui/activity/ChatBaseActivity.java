@@ -1,13 +1,14 @@
 package com.bytedesk.ui.activity;
 
-import android.content.ClipData;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bytedesk.core.api.BDCoreApi;
+import com.bytedesk.core.api.BDMqttApi;
 import com.bytedesk.core.callback.BaseCallback;
 import com.bytedesk.core.event.LongClickEvent;
+import com.bytedesk.core.repository.BDRepository;
 import com.bytedesk.core.util.BDCoreUtils;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -51,7 +52,7 @@ public class ChatBaseActivity extends AppCompatActivity {
                             String deleteMid = longClickEvent.getMessageEntity().getMid();
                             Logger.d("delete:" + deleteMid);
 
-                            // TODO: 删除消息
+                            // 删除消息
                             BDCoreApi.markDeletedMessage(getBaseContext(), deleteMid, new BaseCallback() {
 
                                 @Override
@@ -70,19 +71,11 @@ public class ChatBaseActivity extends AppCompatActivity {
                             String withDrawMid = longClickEvent.getMessageEntity().getMid();
                             Logger.d("withDraw: " + withDrawMid);
 
-                            // TODO: 撤回消息
-                            BDCoreApi.withdrawMessage(getBaseContext(), withDrawMid, new BaseCallback() {
+                            // 撤回消息
+                            BDMqttApi.sendRecallMessage(getBaseContext(), withDrawMid);
 
-                                @Override
-                                public void onSuccess(JSONObject object) {
-
-                                }
-
-                                @Override
-                                public void onError(JSONObject object) {
-
-                                }
-                            });
+                            // 删除本地消息
+                            BDRepository.getInstance(getBaseContext()).deleteMessage(withDrawMid);
 
                             break;
                     }
@@ -91,7 +84,6 @@ public class ChatBaseActivity extends AppCompatActivity {
             })
             .build().show();
     }
-
 
 
 }

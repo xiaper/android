@@ -91,6 +91,17 @@
             android:layout_alignBottom="@+id/bytedesk_message_item_red_packet"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/bytedesk_message_item_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="已读"
+            android:textSize="10sp"
+            android:layout_toLeftOf="@+id/bytedesk_message_item_content"
+            android:layout_alignBottom="@+id/bytedesk_message_item_content"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

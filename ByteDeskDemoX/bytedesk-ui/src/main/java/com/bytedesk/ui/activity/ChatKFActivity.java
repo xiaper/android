@@ -4,7 +4,6 @@ import android.Manifest;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,12 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,6 +45,8 @@ import com.bytedesk.ui.adapter.ChatAdapter;
 import com.bytedesk.ui.listener.ChatItemClickListener;
 import com.bytedesk.ui.util.BDPermissionUtils;
 import com.bytedesk.ui.util.BDUiConstant;
+import com.bytedesk.ui.widget.InputAwareLayout;
+import com.bytedesk.ui.widget.KeyboardAwareLinearLayout;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
@@ -82,8 +83,11 @@ import java.util.Map;
  */
 public class ChatKFActivity extends ChatBaseActivity
         implements ChatItemClickListener,
+        KeyboardAwareLinearLayout.OnKeyboardShownListener,
+        KeyboardAwareLinearLayout.OnKeyboardHiddenListener,
         View.OnClickListener {
 
+    private InputAwareLayout mInputAwaireLayout;
     private QMUITopBarLayout mTopBar;
     private QMUIPullRefreshLayout mPullRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -131,7 +135,7 @@ public class ChatKFActivity extends ChatBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.bytedesk_activity_chat);
+        setContentView(R.layout.bytedesk_activity_chat_kf);
 
         //
         if (null != getIntent()) {
@@ -192,8 +196,8 @@ public class ChatKFActivity extends ChatBaseActivity
         if (mIsVisitor) {
             requestThread();
         }
-        // 从服务器端加载聊天记录
-        getMessages();
+        // 从服务器端加载聊天记录，默认暂不加载
+        // getMessages();
     }
 
     @Override
@@ -329,6 +333,10 @@ public class ChatKFActivity extends ChatBaseActivity
      * 界面初始化
      */
     private void initView () {
+        //
+        mInputAwaireLayout = findViewById(R.id.bytedesk_activity_chat_kf);
+        mInputAwaireLayout.addOnKeyboardShownListener(this);
+        mInputAwaireLayout.addOnKeyboardHiddenListener(this);
         //
         mPullRefreshLayout = findViewById(R.id.bytedesk_chat_pulltorefresh);
         mPullRefreshLayout.setOnPullListener(pullListener);
@@ -497,7 +505,6 @@ public class ChatKFActivity extends ChatBaseActivity
 
         });
     }
-
 
     /**
      * 请求机器人会话
@@ -1392,6 +1399,11 @@ public class ChatKFActivity extends ChatBaseActivity
      */
     private void sendTextMessage(String content) {
 
+        if (!BDMqttApi.isConnected(this)) {
+            Toast.makeText(this, "网络断开，请稍后重试", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // 自定义本地消息id，用于判断消息发送状态. 消息通知或者回调接口中会返回此id
         final String localId = BDCoreUtils.uuid();
 
@@ -1400,47 +1412,47 @@ public class ChatKFActivity extends ChatBaseActivity
         // 发送消息方式有两种：1. 异步发送消息，通过监听通知来判断是否发送成功，2. 同步发送消息，通过回调判断消息是否发送成功
 
         // 1. 异步发送文字消息, TODO: 增加Future机制？
-//        BDMqttApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType);
+        BDMqttApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType);
 
         // 2. 同步发送消息(推荐)
-        BDCoreApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType, new BaseCallback() {
-
-            @Override
-            public void onSuccess(JSONObject object) {
-                //
-                try {
-
-                    int status_code = object.getInt("status_code");
-                    if (status_code == 200) {
-
-                        String localId = object.getJSONObject("data").getString("localId");
-                        Logger.i("callback localId: " + localId);
-
-                        // TODO: 更新消息发送状态为成功
-                        mRepository.updateMessageStatusSuccess(localId);
-
-                        // 发送成功
-                    } else {
-
-                        // 修改本地消息发送状态为error
-                        mRepository.updateMessageStatusError(localId);
-
-                        // 发送消息失败
-                        String message = object.getString("message");
-                        Toast.makeText(ChatKFActivity.this, message, Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(JSONObject object) {
-                // 发送消息失败
-                Toast.makeText(ChatKFActivity.this, "发送消息失败", Toast.LENGTH_LONG).show();
-            }
-        });
+//        BDCoreApi.sendTextMessage(this, mTidOrUidOrGid, content, localId, mThreadType, new BaseCallback() {
+//
+//            @Override
+//            public void onSuccess(JSONObject object) {
+//                //
+//                try {
+//
+//                    int status_code = object.getInt("status_code");
+//                    if (status_code == 200) {
+//
+//                        String localId = object.getJSONObject("data").getString("localId");
+//                        Logger.i("callback localId: " + localId);
+//
+//                        // TODO: 更新消息发送状态为成功
+//                        mRepository.updateMessageStatusSuccess(localId);
+//
+//                        // 发送成功
+//                    } else {
+//
+//                        // 修改本地消息发送状态为error
+//                        mRepository.updateMessageStatusError(localId);
+//
+//                        // 发送消息失败
+//                        String message = object.getString("message");
+//                        Toast.makeText(ChatKFActivity.this, message, Toast.LENGTH_LONG).show();
+//                    }
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(JSONObject object) {
+//                // 发送消息失败
+//                Toast.makeText(ChatKFActivity.this, "发送消息失败", Toast.LENGTH_LONG).show();
+//            }
+//        });
 
     }
 
@@ -1547,8 +1559,21 @@ public class ChatKFActivity extends ChatBaseActivity
     public void onMessageEvent(MessageEvent messageEvent) {
         Logger.i("MessageEvent");
 
-        // TODO: 检查是否当前页面消息，如果是，则发送已读消息回执
-        
+        try {
+
+            JSONObject messageObject = messageEvent.getJsonObject();
+            JSONObject threadObject = messageObject.getJSONObject("thread");
+            String threadTid = threadObject.getString("tid");
+            if (threadTid == mTidOrUidOrGid) {
+
+                String mid = messageEvent.getJsonObject().getString("mid");
+                // 检查是否当前页面消息，如果是，则发送已读消息回执
+                BDMqttApi.sendReceiptReadMessage(this, mid);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -1701,8 +1726,9 @@ public class ChatKFActivity extends ChatBaseActivity
             });
         }
 
-
     }
+
+
 
     /**
      * 下拉刷新
@@ -1733,23 +1759,21 @@ public class ChatKFActivity extends ChatBaseActivity
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String content = charSequence.toString();
-            // Logger.i("input content: ", content);
-
-            // TODO: 输入框文字变化时，发送消息输入状态消息
-
             // TODO: 查询常见问题，并高亮提示
-
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
 
+            String content = editable.toString();
+            if (content != null) {
+                // 输入框文字变化时，发送消息输入状态消息
+                BDMqttApi.sendPreviewMessage(ChatKFActivity.this, mTidOrUidOrGid, content, mThreadType);
+            }
         }
     };
 
@@ -1803,6 +1827,18 @@ public class ChatKFActivity extends ChatBaseActivity
                 Toast.makeText(ChatKFActivity.this, "发送消息失败", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onKeyboardHidden() {
+        Logger.i("onKeyboardHidden");
+
+    }
+
+    @Override
+    public void onKeyboardShown() {
+        Logger.i("onKeyboardShown");
+        mRecyclerView.scrollToPosition(mChatAdapter.getItemCount() - 1);
     }
 
 }

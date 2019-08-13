@@ -45,8 +45,19 @@
         />
 
     <Button
+        android:id="@+id/bytedesk_chat_input_emotion_button"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="4dp"
+        android:layout_toLeftOf="@+id/bytedesk_chat_input_plus_button"
+        android:background="@drawable/bytedesk_input_emotion_button" />
+
+    <Button
         android:id="@+id/bytedesk_chat_input_send_button"
-        android:layout_width="60dp"
+        android:layout_width="55dp"
         android:layout_height="35dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
@@ -54,25 +65,15 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/bytedesk_input_send_button"
         android:text="发送"
+        android:visibility="gone"
         />
-
-    <Button
-        android:id="@+id/bytedesk_chat_input_emotion_button"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="4dp"
-        android:layout_toLeftOf="@+id/bytedesk_chat_input_plus_button"
-        android:background="@drawable/bytedesk_input_emotion_button" />
 
     <Button
         android:id="@+id/bytedesk_chat_input_plus_button"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/bytedesk_input_plus_button"

@@ -62,29 +62,30 @@
                 android:text="@string/kfds_take_picture_label" />
         </LinearLayout>
 
+        <!--发送文件-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/appkefu_plus_show_red_packet_btn"
+                android:id="@+id/appkefu_plus_file_btn"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:background="@drawable/appkefu_pluspanel_btn"
                 android:contentDescription="@string/kfds_imageview_content_description"
-                android:src="@drawable/appkefu_panel_wxtalk_icon" />
+                android:src="@drawable/appkefu_panel_friendcard_icon" />
 
             <TextView
-                android:id="@+id/appkefu_plus_show_red_packet_textview"
+                android:id="@+id/appkefu_plus_file_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:text="@string/kfds_show_red_packet_label" />
+                android:text="@string/kfds_file_label" />
         </LinearLayout>
 
         <!--商品-->
@@ -94,7 +95,8 @@
             android:layout_marginTop="15dp"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="invisible">
 
             <ImageButton
                 android:id="@+id/appkefu_plus_shop_btn"
@@ -120,30 +122,31 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left">
 
-        <!--发送文件-->
+        <!--红包-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="invisible">
 
             <ImageButton
-                android:id="@+id/appkefu_plus_file_btn"
+                android:id="@+id/appkefu_plus_show_red_packet_btn"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:background="@drawable/appkefu_pluspanel_btn"
                 android:contentDescription="@string/kfds_imageview_content_description"
-                android:src="@drawable/appkefu_panel_friendcard_icon" />
+                android:src="@drawable/appkefu_panel_wxtalk_icon" />
 
             <TextView
-                android:id="@+id/appkefu_plus_file_textview"
+                android:id="@+id/appkefu_plus_show_red_packet_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:text="@string/kfds_file_label" />
+                android:text="@string/kfds_show_red_packet_label" />
         </LinearLayout>
 
         <!--阅后即焚-->

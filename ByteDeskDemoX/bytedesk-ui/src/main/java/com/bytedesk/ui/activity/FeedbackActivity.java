@@ -3,6 +3,7 @@ package com.bytedesk.ui.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.bytedesk.ui.R;
 import com.bytedesk.ui.util.BDUiConstant;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
+import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -89,19 +91,19 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     private void initTopBar() {
-
-        mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+        //
+        mTopBar.addLeftBackImageButton().setOnClickListener(v -> finish());
+        //
+        mTopBar.addRightTextButton("我的反馈", QMUIViewHelper.generateViewId())
+                .setOnClickListener(v -> {
+                    Intent intent = new Intent(this, FeedbackRecordActivity.class);
+                    intent.putExtra(BDUiConstant.EXTRA_UID, mUid);
+                    startActivity(intent);
+                });
         mTopBar.setTitle(mTitle);
     }
 
     private void initGroupListView() {
-
         //
         categoryItem = mGroupListView.createItemView("分类");
         categoryItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
@@ -386,8 +388,6 @@ public class FeedbackActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 
     // 请求拍照 和 相册权限
     // 动态请求权限详细用法：https://github.com/googlesamples/easypermissions

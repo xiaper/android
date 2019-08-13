@@ -89,6 +89,27 @@ public class BDUiUtils {
         );
     }
 
+    public static Boolean showTime(String mytime, String before) {
+
+        if(mytime == null || before == null)
+            return true;
+
+        Date mydate = toDate(mytime);
+        Date beforedate = toDate(before);
+
+        if (mydate == null || beforedate == null)
+            return true;
+
+        long timeInterval = mydate.getTime() - beforedate.getTime();
+
+        if(timeInterval/1000 > 60)//显示超过一分钟的
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * 以友好的方式显示时间
      */

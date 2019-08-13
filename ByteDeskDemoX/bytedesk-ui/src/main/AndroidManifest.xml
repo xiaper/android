@@ -2,15 +2,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bytedesk.ui">
 
-    <application>
-        <activity
-            android:name=".activity.LeaveMessageActivity"
-            android:label="@string/title_activity_leave_message"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".activity.ContactProfileActivity"
-            android:label="@string/title_activity_contact_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
-    </application>
-
 </manifest>

@@ -27,6 +27,7 @@
     <!--聊天内容出现电话号码，可直接拨打-->
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+
     <application
         android:name="com.bytedesk.demo.BDApplication"
         android:allowBackup="true"
@@ -117,9 +118,17 @@
             android:name="com.bytedesk.ui.activity.FeedbackActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name="com.bytedesk.ui.activity.FeedbackRecordActivity"
+            android:screenOrientation="portrait"/>
+
         <!--提交工单-->
         <activity
             android:name="com.bytedesk.ui.activity.TicketActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.bytedesk.ui.activity.TicketRecordActivity"
             android:screenOrientation="portrait"/>
 
         <!--帮助中心-->

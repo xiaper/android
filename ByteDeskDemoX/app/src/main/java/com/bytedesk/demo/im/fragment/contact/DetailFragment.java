@@ -124,13 +124,9 @@ public class DetailFragment extends BaseFragment {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent messageEvent) {
-        Logger.i("onMessageEvent: " + messageEvent.getContent());
+        Logger.i("onMessageEvent");
 
-        try {
-            JSONObject jsonObject = new JSONObject(messageEvent.getContent());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
     }
 
 

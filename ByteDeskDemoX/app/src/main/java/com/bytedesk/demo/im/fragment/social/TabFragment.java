@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bytedesk.demo.R;
 import com.bytedesk.demo.common.BaseFragment;
@@ -30,7 +31,7 @@ public class TabFragment extends BaseFragment {
 
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
     @BindView(R.id.tabSegment) QMUITabSegment mTabSegment;
-    @BindView(R.id.pager) QMUIViewPager mQMUIViewPager;
+    @BindView(R.id.pager) ViewPager mQMUIViewPager;
 
     private TabAdapter tabAdapter;
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
@@ -51,7 +52,6 @@ public class TabFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         Logger.i("start");
-
     }
 
     @Override
